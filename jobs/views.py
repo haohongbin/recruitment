@@ -3,6 +3,7 @@ from django.shortcuts import render
 # Create your views here.
 from django.http import HttpResponse
 from django.template import loader
+from django.http import Http404
 
 from jobs.models import Job
 from jobs.models import Cities, JobTypes
@@ -23,3 +24,14 @@ def joblist(request):
         job.type_name = JobTypes[job.job_type][1]
     # 用模版对象的render方法把上下文展现给用户
     return HttpResponse(template.render(context))
+
+def detail(request, job_id):
+    try:
+        job = Job.objects.get(pk=job_id)
+        job.city_name = Cities[job.job_city][1]
+    except Job.DoesNotExist:
+        raise Http404("Job does not exist")
+
+    context = {'job':job}
+    return render(request, 'job.html', context)
+
