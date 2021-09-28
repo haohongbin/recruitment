@@ -15,7 +15,7 @@ from jobs.models import Cities, JobTypes
 def joblist(request):
     job_list = Job.objects.order_by('job_type')
     # 用模版的加载器来加载模版
-    template = loader.get_template('joblist.html')
+    # template = loader.get_template('joblist.html')
     # 定义上下文
     context = {'job_list':job_list}
 
@@ -23,7 +23,8 @@ def joblist(request):
         job.city_name = Cities[job.job_city][1]
         job.type_name = JobTypes[job.job_type][1]
     # 用模版对象的render方法把上下文展现给用户
-    return HttpResponse(template.render(context))
+    # return HttpResponse(template.render(context))
+    return render(request, 'joblist.html', context)
 
 def detail(request, job_id):
     try:

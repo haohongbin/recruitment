@@ -14,7 +14,8 @@ class JobAdmin(admin.ModelAdmin):
 
     # save_model会被自动调用
     def save_model(self, request, obj, form, change):
-        obj.creator = request.user # 创建人设置为当前登录用户
+        if obj.creator is None:
+            obj.creator = request.user # 创建人设置为当前登录用户
         super().save_model(request,obj,form,change) # 保存对象
 
 admin.site.register(Job, JobAdmin)
