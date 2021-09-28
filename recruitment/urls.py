@@ -15,7 +15,9 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
+from django.conf.urls import include, url
 
 urlpatterns = [
+    url(r"^", include("jobs.urls")), # 路径映射，用include指令来引用我们jobs应用里面定义的所有的路径
     path('admin/', admin.site.urls),
 ]

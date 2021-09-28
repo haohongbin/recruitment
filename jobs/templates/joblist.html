@@ -1,0 +1,19 @@
+{#继承base页面#}
+{% extends 'base.html' %}
+
+{#定义的content块的内容，会把base里面定义的内容给替换掉#}
+{% block content %}
+    终于等到你，期待加入我们，用技术去探索一个新世界
+{#    判断变量是否有值#}
+{% if job_list %}
+{#    <ul>定义一个列表#}
+    <ul>
+    {% for job in job_list %}
+        <li>{{job.type_name}}  <a href="/job/{{ job.id }}/" style="color:blue">{{ job.job_name }}</a>   {{job.city_name}}  </li>
+    {% endfor %}
+    </ul>
+{% else %}
+    <p>No jobs are available.</p>
+{% endif %}
+
+{% endblock %}
