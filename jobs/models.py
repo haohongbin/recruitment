@@ -35,5 +35,9 @@ class Job(models.Model):
     # 修改日期，使用 auto_now，可以自动在模型保存时更新时间并使用了默认时区
     modified_date = models.DateTimeField(verbose_name="修改日期", auto_now=True)
 
+    class Meta:
+        verbose_name = '职位' # 给你的模型类起一个更可读的名字一般定义为中文
+        verbose_name_plural = '职位列表' #这个选项是指定，模型的复数形式是什么，如果不指定Django会自动在模型名称后加一个’s’
+
     def __str__(self):
         return self.job_name
