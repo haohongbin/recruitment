@@ -9,6 +9,17 @@ class CandidateAdmin(admin.ModelAdmin):
         'second_score',
         'second_result', 'second_interviewer_user', 'hr_score', 'hr_result', 'hr_interviewer_user',)
 
+    # 右侧筛选条件
+    list_filter = (
+    'city', 'first_result', 'second_result', 'hr_result', 'first_interviewer_user', 'second_interviewer_user',
+    'hr_interviewer_user')
+
+    # 查询字段
+    search_fields = ('username', 'phone', 'email', 'bachelor_school')
+
+    # 列表页排序字段
+    ordering = ('hr_result', 'second_result', 'first_result',)
+
     # 页面字段分组展示 ("username", "city", "phone")会展示为一行
     fieldsets = (
         (None, {'fields': ("userid", ("username", "city", "phone"), ("email", "apply_position", "born_address", "gender"), ("candidate_remark", "bachelor_school", "master_school", "doctor_school"), ("major", "degree", "test_score_of_general_ability", "paper_score", "last_editor"))}),
