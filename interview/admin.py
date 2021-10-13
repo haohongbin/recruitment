@@ -1,8 +1,49 @@
 from django.contrib import admin
 from interview.models import Candidate
+from django.http import HttpResponse
+import csv
+from datetime import datetime
 # Register your models here.
 
+exportable_fields = ('username', 'city', 'phone', 'bachelor_school', 'master_school', 'degree', 'first_result', 'first_interviewer_user',
+                     'second_result', 'second_interviewer_user', 'hr_result', 'hr_score', 'hr_remark', 'hr_interviewer_user')
+
+def export_model_as_csv(modeladmin, request, queryset):
+    """
+    导出函数
+    :param modeladmin:
+    :param request: 用户发起的请求
+    :param queryset: 用户列表选择的结果列表里面的数据集合
+    :return:
+    """
+    response = HttpResponse(content_type='text/csv') #返回类型
+    field_list = exportable_fields
+    response['Content-Disposition'] = 'attachment; filename=%s-list-%s.csv' % (
+        'recruitment-candidates',
+        datetime.now().strftime('%Y-%m-%d-%H-%M-%S'),
+    )
+    # 写入表头
+    writer = csv.writer(response)
+    # 每个字段对应的中文名作为我们导出文件里面的表头
+    writer.writerow(
+        [queryset.model._meta.get_field(f).verbose_name.title() for f in field_list],
+    )
+    for obj in queryset:
+        ## 单行的记录（各个字段的值），根据字段对象，从当前实例 (obj) 中获取字段值
+        csv_line_values = []
+        for field in field_list:
+            field_object = queryset.model._meta.get_field(field)
+            field_value = field_object.value_from_object(obj)
+            csv_line_values.append(field_value)
+        writer.writerow(csv_line_values)
+
+    return response
+# 菜单名字定制。设置它的属性
+export_model_as_csv.short_description = u'导出为CSV文件'
+
 class CandidateAdmin(admin.ModelAdmin):
+    # 导出函数注册到admin的actions里面
+    actions = [export_model_as_csv]
     exclude = ('creator', 'created_date', 'modified_date')
     list_display = (
         'username', 'city', 'bachelor_school', 'first_score', 'first_result', 'first_interviewer_user',
