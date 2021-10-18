@@ -65,6 +65,42 @@ class CandidateAdmin(admin.ModelAdmin):
     # 列表页排序字段
     ordering = ('hr_result', 'second_result', 'first_result',)
 
+    # 设置只读，无法修改(针对所有人都为只读)
+    # readonly_fields = ('first_interviewer_user', 'second_interviewer_user')
+    def get_group_names(self, user):
+        group_names = []
+        for g in user.groups.all():
+            group_names.append(g.name)
+        return group_names
+
+    def get_readonly_fields(self, request, obj=None):
+        group_names = self.get_group_names(request.user) # 取到用户所属的群组角色
+
+        if '面试官' in group_names:
+            logger.info("面试官 is in user's group for %s" % request.user.username)
+            return ('first_interviewer_user','second_interviewer_user',)
+        return ()
+
+    # 指定列表哪些字段可以编辑(针对所有人都可以编辑)
+    # list_editable = ('first_interviewer_user', 'second_interviewer_user')
+    def get_list_editable(self, request):
+        group_names = self.get_group_names(request.user)
+
+        if request.user.is_superuser or 'hr' in group_names:
+            return ('first_interviewer_user', 'second_interviewer_user')
+        return ()
+
+    def get_changelist_instance(self, request):
+        """
+        override admin method and list_editable property value
+        with values returned by our custom method implementation.
+        :param request:
+        :return:
+        """
+        self.list_editable = self.get_list_editable(request)
+        return super(CandidateAdmin, self).get_changelist_instance(request)
+
+
     # 页面字段分组展示 ("username", "city", "phone")会展示为一行
     fieldsets = (
         (None, {'fields': ("userid", ("username", "city", "phone"), ("email", "apply_position", "born_address", "gender"), ("candidate_remark", "bachelor_school", "master_school", "doctor_school"), ("major", "degree", "test_score_of_general_ability", "paper_score", "last_editor"))}),

@@ -50,6 +50,7 @@ class Candidate(models.Model):
     first_result = models.CharField(max_length=256, choices=FIRST_INTERVIEW_RESULT_TYPE, blank=True,
                                     verbose_name=u'初试结果')
     first_recommend_position = models.CharField(max_length=256, blank=True, verbose_name=u'推荐部门')
+    # 面试官使用注册用户
     first_interviewer_user = models.ForeignKey(User, related_name='first_interviewer_user', blank=True, null=True, on_delete=models.CASCADE, verbose_name=u'面试官')
 
     first_remark = models.CharField(max_length=135, blank=True, verbose_name=u'初试备注')
