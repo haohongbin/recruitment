@@ -21,6 +21,7 @@ from django.utils.translation import gettext_lazy as _
 urlpatterns = [
     # url(r"^", include("jobs.urls")), # 路径映射，用include指令来引用我们jobs应用里面定义的所有的路径
     path("", include("jobs.urls")),
+    path('grappelli/', include('grappelli.urls')), # grappelli URLS
     path('admin/', admin.site.urls),
 ]
 
