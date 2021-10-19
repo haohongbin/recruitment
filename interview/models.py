@@ -99,6 +99,7 @@ class Candidate(models.Model):
         verbose_name = u'应聘者'
         verbose_name_plural = u'应聘者'
 
+        # model中自定义权限，然后去admin中设置。需要重新进行数据库迁移，这样才能有这个权限
         permissions = [
             ("export", "Can export candidate list"),
             ("notify", "notify interviewer for candidate review"),
