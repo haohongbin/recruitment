@@ -12,5 +12,7 @@ urlpatterns = [
     # 职位详情
     # url(r'^job/(?P<job_id>\d+)/$', views.detail, name='detail'),
     path('job/<int:job_id>/', views.detail, name='detail'),
+    # 首页自动跳转到职位列表
+    path("", views.joblist, name="name"),
 
 ]
