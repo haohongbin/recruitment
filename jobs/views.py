@@ -6,7 +6,6 @@ from django.template import loader
 from django.http import Http404
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic.edit import CreateView
-from jobs.forms import ResumeForm
 from django.http import HttpResponseRedirect
 
 
