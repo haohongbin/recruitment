@@ -4,8 +4,13 @@ from django.shortcuts import render
 from django.http import HttpResponse
 from django.template import loader
 from django.http import Http404
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.views.generic.edit import CreateView
+from jobs.forms import ResumeForm
+from django.http import HttpResponseRedirect
 
-from jobs.models import Job
+
+from jobs.models import Job, Resume
 from jobs.models import Cities, JobTypes
 
 """
@@ -36,3 +41,30 @@ def detail(request, job_id):
     context = {'job':job}
     return render(request, 'job.html', context)
 
+
+class ResumeCreateView(LoginRequiredMixin, CreateView):
+    """
+    简历职位页面
+    因为类继承只能继承一个父类，Mixin可以达到让一个类能够继承多个类的目的
+    """
+    template_name = 'resume_form.html'
+    success_url = '/joblist/'
+    model = Resume
+    fields = ["username", "city", "phone",
+        "email", "apply_position", "gender",
+        "bachelor_school", "master_school", "major", "degree", "picture", "attachment",
+        "candidate_introduction", "work_experience", "project_experience"]
+
+    # 从 URL 请求参数带入默认值
+    def get_initial(self):
+        initial = {}
+        for x in self.request.GET:
+            initial[x] = self.request.GET[x]
+        return initial
+
+    # 简历与当前用户关联
+    def form_valid(self, form):
+        self.object = form.save(commit=False)
+        self.object.applicant = self.request.user
+        self.object.save()
+        return HttpResponseRedirect(self.get_success_url())

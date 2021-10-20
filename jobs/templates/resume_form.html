@@ -1,0 +1,6 @@
+<H2>提交简历</H2>
+<form method="post">{% csrf_token %}
+{#    把我们上下文环境里面传过来的form,调用as_p把它转换成要展示的html内容#}
+    {{ form.as_p }}
+    <input type="submit" value="提交">
+</form>
