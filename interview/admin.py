@@ -1,4 +1,6 @@
 from django.contrib import admin
+from django.utils.safestring import mark_safe
+
 from interview.models import Candidate
 from django.http import HttpResponse
 import csv
@@ -9,6 +11,7 @@ from interview import dingtalk
 from django.contrib import messages
 import logging
 # Register your models here.
+from jobs.models import Resume
 
 logger = logging.getLogger(__name__)
 
@@ -73,8 +76,9 @@ class CandidateAdmin(admin.ModelAdmin):
     # 导出函数注册到admin的actions里面
     actions = [export_model_as_csv, notify_interviewer]
     exclude = ('creator', 'created_date', 'modified_date')
+    # 除了引用真实的字段外，也可以引用函数
     list_display = (
-        'username', 'city', 'bachelor_school', 'first_score', 'first_result', 'first_interviewer_user',
+        'username', 'city', 'bachelor_school', 'get_resume', 'first_score', 'first_result', 'first_interviewer_user',
         'second_score',
         'second_result', 'second_interviewer_user', 'hr_score', 'hr_result', 'hr_interviewer_user',)
 
@@ -88,6 +92,23 @@ class CandidateAdmin(admin.ModelAdmin):
 
     # 列表页排序字段
     ordering = ('hr_result', 'second_result', 'first_result',)
+
+    def get_resume(self, obj):
+        """
+
+        :param obj: 当前候选人实体
+        :return: 简历详情链接
+        """
+        if not obj.phone:
+            return ""
+        resumes = Resume.objects.filter(phone=obj.phone)
+        # target="_blank" 使用新的链接打开
+        if resumes and len(resumes) > 0:
+            return mark_safe(u'<a href="/resume/%s" target="_blank">%s</a' % (resumes[0].id, "查看简历"))
+        return ""
+
+    get_resume.short_description = '查看简历'
+    get_resume.allow_tags = True # 因为用到html标签，所以设置为
 
     # 设置只读，无法修改(针对所有人都为只读)
     # readonly_fields = ('first_interviewer_user', 'second_interviewer_user')
