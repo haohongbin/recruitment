@@ -23,7 +23,10 @@ urlpatterns = [
     path("", include("jobs.urls")),
     path('grappelli/', include('grappelli.urls')), # grappelli URLS
     path('admin/', admin.site.urls),
-    path('accounts/', include('registration.backends.simple.urls'))
+    path('accounts/', include('registration.backends.simple.urls')),
+
+    path('i18n/', include('django.conf.urls.i18n')), # 增加多语言的url路径支持
+
 ]
 
 admin.site.site_header = _('**科技招聘管理系统')
