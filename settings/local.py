@@ -20,3 +20,22 @@ INSTALLED_APPS += (
 
 ## 钉钉群的 WEB_HOOK， 用于发送钉钉消息
 DINGTALK_WEB_HOOK = "https://oapi.dingtalk.com/robot/send?access_token=1e85e96073b2ba70d0e403f05b9fa20c7dce27a3e28b3ddcdc18c4edf02865a5"
+
+# pip install --upgrade sentry-sdk
+import sentry_sdk
+from sentry_sdk.integrations.django import DjangoIntegration
+
+sentry_sdk.init(
+    dsn="http://252cba25520842eab719d87ffb1834c1@127.0.0.1:9000/4",
+    integrations=[DjangoIntegration()],
+
+    # Set traces_sample_rate to 1.0 to capture 100%
+    # of transactions for performance monitoring.
+    # We recommend adjusting this value in production.
+    # performance tracing sample rate, 采样率, 生产环境访问量过大时，建议调小（不用每一个URL请求都记录性能）
+    traces_sample_rate=1.0, # 日志采样率 1.0表示所有的请求都会做采样
+
+    # If you wish to associate users to errors (assuming you are using
+    # django.contrib.auth) you may enable sending PII data.
+    send_default_pii=True # 是不是发送个人标识的信息。发送的话，在sentry中可以进行不同维度的聚类（用户名、浏览器、客户端版本、操作系统做聚类分析）
+)

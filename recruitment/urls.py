@@ -18,6 +18,11 @@ from django.urls import path
 from django.conf.urls import include, url
 from django.utils.translation import gettext_lazy as _
 
+from django.urls import path
+
+def trigger_error(request):
+    division_by_zero = 1 / 0
+
 urlpatterns = [
     # url(r"^", include("jobs.urls")), # 路径映射，用include指令来引用我们jobs应用里面定义的所有的路径
     path("", include("jobs.urls")),
@@ -26,6 +31,8 @@ urlpatterns = [
     path('accounts/', include('registration.backends.simple.urls')),
 
     path('i18n/', include('django.conf.urls.i18n')), # 增加多语言的url路径支持
+
+    path('sentry-debug/', trigger_error),
 
 ]
 

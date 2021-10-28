@@ -47,7 +47,7 @@ def export_model_as_csv(modeladmin, request, queryset):
             csv_line_values.append(field_value)
         writer.writerow(csv_line_values)
 
-    logger.info(" %s has exported %s candidate records" % (request.user.username, len(queryset)))
+    logger.error(" %s has exported %s candidate records" % (request.user.username, len(queryset)))
     return response
 # 菜单名字定制。设置它的属性
 export_model_as_csv.short_description = u'导出为CSV文件'
