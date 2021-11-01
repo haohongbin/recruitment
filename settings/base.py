@@ -47,7 +47,16 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'jobs',
     'interview',
+    'rest_framework',
 ]
+# REST框架在settings中配置
+REST_FRAMEWORK = {
+    # Use Django's standard `django.contrib.auth` permissions,
+    # or allow read-only access for unauthenticated users.
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly' # 指定鉴权的方式是用DjangoModel自带的鉴权方式或者匿名用户的只读访问
+    ]
+}
 
 # 中间件从上往下依次执行
 MIDDLEWARE = [

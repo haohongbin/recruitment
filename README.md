@@ -108,7 +108,9 @@ def detail_resume(request, resume_id):
     except Resume.DoesNotExist:
         raise Http404("resume does not exist")
 ```
-
+***
+***
+***
 # CSRF跨站请求伪造
 CSRF(Cross-site request forgery，简称：CSRF 或 XSRF）  
 恶意攻击者在用户不知情的情况下，使用用户的身份来操作
@@ -130,7 +132,9 @@ CSRF(Cross-site request forgery，简称：CSRF 或 XSRF）
 此时超级管理员访问也会报没有token，这时需要在页面中加上{% csrf_token %}，折这样在视图中渲染模版时调用render方法，此方法带有request context,
 request context把csrf_token服务端产生的token吐到客户端的html的页面上，然后用户在浏览器里去提交请求的时候会自动把token带回来给服务端，服务端收到
 token回去校验。如果校验通过是服务端产生的，那么认为这个请求是合法安全的，就会继续处理  
-
+***
+***
+***
 # SQL注入攻击
 * SQL注入漏洞：攻击者直接对网站数据库执行任意SQL语句，在无需用户权限的情况下即可实现对数据的访问、修改甚至删除
 * Django的ORM系统自动规避了SQL注入攻击
@@ -144,10 +148,22 @@ Person.objects.raw(query)
 name_map = {'first':'first_name', 'last':'last_name', 'bd':'birth_date', 'pk':'id'}
 Person.objects.raw('select * from employee', translations=name_map)
 
-
 ```
+***
+***
+***
+# Django Rest framework开发API
+参考官网：https://www.django-rest-framework.org/  
+大致步骤：  
+1. 安装djangorestframework、markdown、filter
+2. settings中添加"rest_framework"到app
+3. REST框架在settings中配置,指定鉴权的方式是用DjangoModel自带的鉴权方式或者匿名用户的只读访问
+4. urls.py中定义实体序列化的方式，指定序列化返回哪些字段，然后再定义ViewSet视图的集合，展示哪些数据，最后把视图的集合注册到api列表里面
+5. 添加API访问的根路径以及rest api管理后台里面的登录和退出的url路径前缀
 
-
+到此配置成功  
+访问http://127.0.0.1:8000/api  
+>![](snapshot/restframework-success.png)
 
 
 
