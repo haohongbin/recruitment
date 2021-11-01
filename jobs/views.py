@@ -1,3 +1,4 @@
+from django.contrib.auth.decorators import permission_required
 from django.shortcuts import render
 
 # Create your views here.
@@ -8,8 +9,9 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic.edit import CreateView
 from django.http import HttpResponseRedirect
 from django.views.generic.detail import DetailView
-
-
+from django.contrib.auth.models import User, Group
+from django.views.decorators.csrf import csrf_exempt
+from django.contrib import messages
 
 from jobs.models import Job, Resume
 from jobs.models import Cities, JobTypes
@@ -87,3 +89,25 @@ def detail_resume(request, resume_id):
         return HttpResponse(content)
     except Resume.DoesNotExist:
         raise Http404("resume does not exist")
+
+
+# 这个 URL 仅允许有 创建用户权限的用户访问
+# @csrf_exempt # 这个标记表示这个视图不去处理CSRF的攻击
+@permission_required('auth.user_add')
+def create_hr_user(request):
+    if request.method == "GET":
+        return render(request, 'create_hr.html', {})
+    if request.method == "POST":
+        username = request.POST.get("username")
+        password = request.POST.get("password")
+
+        hr_group = Group.objects.get(name='hr')
+        # 创建用户，不是管理员，设置active为活跃的，is_staff为True是员工可以登录管理后台
+        user = User(is_superuser=False, username=username, is_active=True, is_staff=True)
+        user.set_password(password)
+        user.save()
+        user.groups.add(hr_group)
+
+        messages.add_message(request, messages.INFO, 'user created %s' % username)
+        return render(request, 'create_hr.html')
+    return render(request, 'create_hr.html')

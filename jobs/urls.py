@@ -20,6 +20,9 @@ urlpatterns = [
     path('resume/add/', views.ResumeCreateView.as_view(), name='resume-add'),
     path('resume/<int:pk>/', views.ResumeDetailView.as_view(), name='resume-detail'),
 
+    # 管理员创建 HR 账号的 页面:
+    path('create_hr_user/', views.create_hr_user, name='create_hr_user'),
+
 ]
 
 if settings.DEBUG : # 生产环境不让访问

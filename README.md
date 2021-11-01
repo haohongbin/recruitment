@@ -109,6 +109,48 @@ def detail_resume(request, resume_id):
         raise Http404("resume does not exist")
 ```
 
+# CSRF跨站请求伪造
+CSRF(Cross-site request forgery，简称：CSRF 或 XSRF）  
+恶意攻击者在用户不知情的情况下，使用用户的身份来操作
+
+黑客的准备步骤：  
+* 黑客创建一个请求网站A类的URL的web页面，放在恶意网站B中，这个文件包含了以一个创建用户的名单。这个表单加载完毕就会立即提交
+* 黑客把这个恶意web页面的url发送至超级管理员，诱导超级管理员打开这个web页面  
+
+***演示***  
+1. 管理后台增加超级管理员创建用户的页面。见create_hr.html  
+2. 黑客创建文件夹malicious,进入文件夹创建页面interesting.html(这个页面在加载时自动提交，会把请求发送到服务器http://127.0.0.1:8000，直接调用create_hr_user/，以管理员的身份创建账号)  
+3. 黑客启动服务：python -m http.server 7000(这是python自带的)  
+4. 此时访问黑客的url：127.0.0.1:7000/interesting.html,就会创建用户  
+
+***如何解决***  
+将视图上的@csrf_exempt去除，这样用户访问的时候，Django的服务会检查CSRF的token，如果没有token会直接拒绝掉  
+>![](snapshot/CSRF-FAIL.png)  
+
+此时超级管理员访问也会报没有token，这时需要在页面中加上{% csrf_token %}，折这样在视图中渲染模版时调用render方法，此方法带有request context,
+request context把csrf_token服务端产生的token吐到客户端的html的页面上，然后用户在浏览器里去提交请求的时候会自动把token带回来给服务端，服务端收到
+token回去校验。如果校验通过是服务端产生的，那么认为这个请求是合法安全的，就会继续处理  
+
+# SQL注入攻击
+* SQL注入漏洞：攻击者直接对网站数据库执行任意SQL语句，在无需用户权限的情况下即可实现对数据的访问、修改甚至删除
+* Django的ORM系统自动规避了SQL注入攻击
+* 原始SQL语句，切记避免拼接字符串，这是错误的调用方式  
+```sql
+query = 'SELECT * FROM employee where last_name = %s' % name 
+Person.objects.raw(query)
+```
+* 正确的调用方式，使用参数绑定
+```python
+name_map = {'first':'first_name', 'last':'last_name', 'bd':'birth_date', 'pk':'id'}
+Person.objects.raw('select * from employee', translations=name_map)
+
+
+```
+
+
+
+
+
 
 
 
