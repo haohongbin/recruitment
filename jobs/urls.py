@@ -1,6 +1,8 @@
 from django.conf.urls import url
 from django.urls import path
 from jobs import views
+from django.conf import settings
+
 
 """
 这里只是在应用里面定义了url路径的映射，还需要在整个project的urls映射
@@ -19,3 +21,7 @@ urlpatterns = [
     path('resume/<int:pk>/', views.ResumeDetailView.as_view(), name='resume-detail'),
 
 ]
+
+if settings.DEBUG : # 生产环境不让访问
+    # 有 XSS 漏洞的视图页面，
+    urlpatterns += [url(r'^detail_resume/(?P<resume_id>\d+)/$', views.detail_resume, name='detail_resume'),]
