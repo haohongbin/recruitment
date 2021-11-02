@@ -165,6 +165,30 @@ Person.objects.raw('select * from employee', translations=name_map)
 访问http://127.0.0.1:8000/api  
 >![](snapshot/restframework-success.png)
 
+***
+***
+***
+
+# Redis缓存（需要先安装Django-redis包）
+参考官网：https://django-redis-chs.readthedocs.io/zh_CN/latest/  
+***缓存的策略***  
+* 整站缓存
+* 视图缓存
+* 模板片段缓存
+
+启动redis服务：redis-server  
+>![redis-server](snapshot/redis-server.png) 
+ 
+***步骤***
+1. settings中缓存设置  
+2. 设置整站缓存，在settings文件中间件配置中添加中间件  
+
+此时访问页面,查看response headers看缓存配置是否生效  
+>![](snapshot/redis-success.png)  
+
+***测试***：  
+在访问数据库的代码中增加日志，在没有命中缓存的时候，这个日志会打印出来，会访问数据库。否则日志不会打印，缓存机制生效
+
 
 
 

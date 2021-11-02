@@ -15,6 +15,8 @@ from django.contrib import messages
 
 from jobs.models import Job, Resume
 from jobs.models import Cities, JobTypes
+import logging
+logger = logging.getLogger(__name__)
 
 """
 在views里面指定每个url使用哪个模版来渲染页面
@@ -38,6 +40,7 @@ def detail(request, job_id):
     try:
         job = Job.objects.get(pk=job_id)
         job.city_name = Cities[job.job_city][1]
+        logger.info('job retrieved from db :%s' % job_id)
     except Job.DoesNotExist:
         raise Http404("Job does not exist")
 

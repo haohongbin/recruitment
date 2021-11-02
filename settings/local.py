@@ -17,6 +17,20 @@ INSTALLED_APPS += (
     # other apps for production site
 )
 
+# 缓存设置
+CACHES  =  {
+    "default" :  {
+        "BACKEND" :  "django_redis.cache.RedisCache" ,
+        "LOCATION" :  "redis://127.0.0.1:6379/1" ,
+        'TIMEOUT': 60,
+        "OPTIONS" :  {
+            "CLIENT_CLASS" :  "django_redis.client.DefaultClient" ,
+            "SOCKET_CONNECT_TIMEOUT": 5,  # redis连接的超时时间 秒
+            "SOCKET_TIMEOUT": 5,  # 每次读写数据的超时时间 秒
+            # 'PASSWORD': 'mysecret', # redis服务未设置密码，所以不需要
+        }
+    }
+}
 
 ## 钉钉群的 WEB_HOOK， 用于发送钉钉消息
 DINGTALK_WEB_HOOK = "https://oapi.dingtalk.com/robot/send?access_token=1e85e96073b2ba70d0e403f05b9fa20c7dce27a3e28b3ddcdc18c4edf02865a5"

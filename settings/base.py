@@ -65,7 +65,11 @@ MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.locale.LocaleMiddleware', # 多语言中间件
+
+    'django.middleware.cache.UpdateCacheMiddleware', # 缓存中间件
     'django.middleware.common.CommonMiddleware',
+    'django.middleware.cache.FetchFromCacheMiddleware', # 在系统每一个视图处理的时候，先从缓存系统取数据，取完之后做中间的处理过程，最后去更新缓存的数据
+
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
