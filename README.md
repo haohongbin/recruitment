@@ -200,8 +200,9 @@ Person.objects.raw('select * from employee', translations=name_map)
 * 快速：可以执行一分钟上百万的任务
 * 灵活：每一块都可以扩展
 
-运行celery服务器
+运行celery服务器  
 ```
+cd celery
 $ celery -A tasks worker --loglevel=INFO
 ```
 >![](snapshot/celery-success.png)   
@@ -216,5 +217,34 @@ celery -A tasks flower --broker=redis://127.0.0.1:6379/0
 访问：127.0.0.1:5555  
 >![](snapshot/flower.png) 
 
+***
+***
+***
+# django与celery集成
+参考文档：https://docs.celeryproject.org/en/latest/django/first-steps-with-django.html
 
+通知面试官，发送钉钉消息改为异步任务  
+>![](snapshot/dingding_celery.png) 
+
+启动celery  
+```
+cd 根目录
+DJANGO_SETTINGS_MODULE=settings.local celery -A recruitment worker --loglevel=info
+由于celery配置使用的settings里面的本地的配置，所以前面加个DJANGO_SETTINGS_MODULE的环境变量
+```
+>![](snapshot/Django-celery-success.png)   
+上图可以看出使用redis作为消息存储也作为结果存储  
+
+启动flower  
+```
+DJANGO_SETTINGS_MODULE=settings.local celery -A recruitment flower --brokwer=redis://127.0.0.1:6379/0
+```
+
+***整个架构***  
+前面是从我们的用户侧发送请求到Django  
+然后Django产生的任务，把这个任务发给celery  
+celery实际上是有它的消息队列，有代理broker,去接受到这个任务把它存起来，  
+存起来之后，它的worker celery的worker会去检索队列里面的任务，把这个任务一个个执行  
+执行完之后存下来，在我们系统里面可以知道执行结果，也能过通过flower监控到任务的状态  
+>![](snapshot/django-celery.png)   
 

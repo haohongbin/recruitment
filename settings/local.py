@@ -53,3 +53,14 @@ sentry_sdk.init(
     # django.contrib.auth) you may enable sending PII data.
     send_default_pii=True # 是不是发送个人标识的信息。发送的话，在sentry中可以进行不同维度的聚类（用户名、浏览器、客户端版本、操作系统做聚类分析）
 )
+
+
+CELERY_BROKER_URL = 'redis://127.0.0.1:6379/0'
+CELERY_RESULT_BACKEND = 'redis://127.0.0.1:6379/1'
+CELERY_ACCEPT_CONTENT = ['application/json']
+CELERY_RESULT_SERIALIZER = 'json'
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_TIMEZONE = 'Asia/Shanghai'
+CELERYD_MAX_TASKS_PER_CHILD = 10
+CELERYD_LOG_FILE = os.path.join(BASE_DIR, "logs", "celery_work.log")
+CELERYBEAT_LOG_FILE = os.path.join(BASE_DIR, "logs", "celery_beat.log")

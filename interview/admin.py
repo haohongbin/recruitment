@@ -12,6 +12,7 @@ from django.contrib import messages
 import logging
 # Register your models here.
 from jobs.models import Resume
+from .tasks import send_dingtalk_message
 
 logger = logging.getLogger(__name__)
 
@@ -67,7 +68,9 @@ def notify_interviewer(modeladmin, request, queryset):
     for obj in queryset:
         candidates = obj.username + ";" + candidates
         interviewers = obj.first_interviewer_user.username + ";" + interviewers
-    dingtalk.send("候选人 %s 进入面试环节，亲爱的面试官，请准备好面试： %s" % (candidates, interviewers))
+    # dingtalk.send("候选人 %s 进入面试环节，亲爱的面试官，请准备好面试： %s" % (candidates, interviewers))
+    # 任务被扔到celery队列里面去异步执行
+    send_dingtalk_message.delay("候选人 %s 进入面试环节，亲爱的面试官，请准备好面试： %s" % (candidates, interviewers))
     messages.add_message(request, messages.INFO, '已经成功发送面试通知')
 notify_interviewer.short_description = '通知一面面试官'
 
