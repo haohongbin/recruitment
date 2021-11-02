@@ -189,9 +189,32 @@ Person.objects.raw('select * from employee', translations=name_map)
 ***测试***：  
 在访问数据库的代码中增加日志，在没有命中缓存的时候，这个日志会打印出来，会访问数据库。否则日志不会打印，缓存机制生效
 
+***
+***
+***
+# Celery的使用
+参考文档：https://docs.celeryproject.org/en/stable/getting-started/first-steps-with-celery.html#first-steps  
+* 一个分布式的任务队列
+* 简单：几行代码可以创建一个简单的celery任务
+* 高可用：工作机会自动重试
+* 快速：可以执行一分钟上百万的任务
+* 灵活：每一块都可以扩展
 
+运行celery服务器
+```
+$ celery -A tasks worker --loglevel=INFO
+```
+>![](snapshot/celery-success.png)   
+#### Flower:一个实时的celery任务监控系统
+参照文档：https://docs.celeryproject.org/en/stable/userguide/monitoring.html  
+启动flower:  
+```
+celery -A tasks flower --broker=redis://127.0.0.1:6379/0
+```
+>![](snapshot/flower-success.png) 
 
-
+访问：127.0.0.1:5555  
+>![](snapshot/flower.png) 
 
 
 
