@@ -48,6 +48,7 @@ INSTALLED_APPS = [
     'jobs',
     'interview',
     'rest_framework',
+    'django_celery_beat',
 ]
 # REST框架在settings中配置
 REST_FRAMEWORK = {

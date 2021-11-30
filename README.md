@@ -68,7 +68,7 @@ sentry下载的21.8.0的版本，使用的21.10.0版本时，捕获不到异常
 * JavaScript代码执行恶意代码（调用恶意请求，发送数据到攻击者等等）   
 
 ***示例***  
-```python
+```
 '''
 直接返回  HTML 内容的视图 （这段代码返回的页面有 XSS 漏洞，能够被攻击者利用）
 '''
@@ -85,7 +85,7 @@ if settings.DEBUG : # 生产环境不让访问
     urlpatterns += [url(r'^detail_resume/(?P<resume_id>\d+)/$', views.detail_resume, name='detail_resume'),]
 ``` 
 某用户（恶意攻击者）申请职位时，在自我介绍中，输入JavaScript代码，然后提交  
-```javascript
+```
 <script>alert('page cookies:\n' + document.cookie);</script>
 ```
 
@@ -98,7 +98,7 @@ if settings.DEBUG : # 生产环境不让访问
 render方法，用Django自带的模版的机制去渲染页面，这样能完全避免XSS的攻击（也可以使用通用视图，像简历详情一样）。  
 
 简单点,使用html的escape方法进行转义：
-```python
+```
 import html
 def detail_resume(request, resume_id):
     try:
@@ -144,7 +144,7 @@ query = 'SELECT * FROM employee where last_name = %s' % name
 Person.objects.raw(query)
 ```
 * 正确的调用方式，使用参数绑定
-```python
+```
 name_map = {'first':'first_name', 'last':'last_name', 'bd':'birth_date', 'pk':'id'}
 Person.objects.raw('select * from employee', translations=name_map)
 
@@ -246,5 +246,75 @@ DJANGO_SETTINGS_MODULE=settings.local celery -A recruitment flower --brokwer=red
 celery实际上是有它的消息队列，有代理broker,去接受到这个任务把它存起来，  
 存起来之后，它的worker celery的worker会去检索队列里面的任务，把这个任务一个个执行  
 执行完之后存下来，在我们系统里面可以知道执行结果，也能过通过flower监控到任务的状态  
->![](snapshot/django-celery.png)   
+>![](snapshot/django-celery.png)  
+
+# 定时任务
+1. 安装beat:pip install django-celery-beat  
+2. settings文件中注册app"django_celery_beat"  
+3. 数据库变更python manage.py migrate  
+4. 使用DatabaseScheduler启动beat或者在配置中设置beat_scheduler  
+```
+DJANGO_SETTINGS_MODULE=settings.local celery -A recruitment beat --scheduler django_celery_beat.schedulers:DatabaseScheduler
+# 指定scheduler 为DatabaseScheduler就是说使用数据库里面的表作为任务的存储以及任务状态的运行状态存储
+```  
+* 管理定时任务的方法  
+>* 在admin后台添加管理定时任务
+>![](snapshot/celery-admin.png) 
+>* 系统启动时自动注册定时任务
+```
+from celery.schedules import crontab
+
+@app.on_after_configure.connect # 系统启动完成之后，再去执行此方法
+def setup_periodic_tasks(sender, **kwargs):
+    # Calls test('hello') every 10 seconds.
+    # 添加定时任务，每10秒运行一次
+    sender.add_periodic_task(10.0, test.s('hello'), name='hello every 10')
+
+    # Calls test('world') every 30 seconds
+    sender.add_periodic_task(30.0, test.s('world'), expires=10)
+
+    # Executes every Monday morning at 7:30 a.m.
+    sender.add_periodic_task(
+        crontab(hour=7, minute=30, day_of_week=1),
+        test.s('Happy Mondays!'),
+    )
+
+@app.task
+def test(arg):
+    print(arg)
+
+```
+>* 直接设置应用的beat_schedule  
+```
+from recruitment.tasks import add
+
+app.conf.beat_schedule = {
+    'add-every-10-seconds': {
+        'task': 'recruitment.tasks.add',
+        'schedule': 10.0,
+        'args': (16, 4, )
+    },
+}
+```
+>* 运行时添加定时任务
+```
+# import json
+# # 导入定时任务的类
+# from django_celery_beat.models import PeriodicTask, IntervalSchedule
+#
+# # 先创建定时策略 每隔10秒运行一次的任务
+# schedule, created = IntervalSchedule.objects.get_or_create(every=10,period=IntervalSchedule.SECONDS,)
+#
+# # 再创建任务 PeriodicTask的model来创建一个对象
+# # name 任务的名称  task 要执行的方法  json格式的参数
+# task = PeriodicTask.objects.create(interval=schedule, name='say welcome 2021-01', task='recruitment.celery.test', args=json.dumps(['welcome']))
+
+```
+
+可以在管理后台看到创建的任务  
+>![](snapshot/periodic-task.png) 
+
+
+# 文件和图片上传
+
 
