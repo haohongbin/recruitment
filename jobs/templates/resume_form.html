@@ -17,6 +17,7 @@
 {% bootstrap_messages %}
 
 <H2>提交简历</H2>
+{#enctype指定编码方式#}
 <form method="post" method="post" class="form" enctype="multipart/form-data" style="width:600px;margin-left:5px">
     {% csrf_token %}
     {% bootstrap_form form %}

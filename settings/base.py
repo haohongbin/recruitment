@@ -49,6 +49,7 @@ INSTALLED_APPS = [
     'interview',
     'rest_framework',
     'django_celery_beat',
+    'django_oss_storage',
 ]
 # REST框架在settings中配置
 REST_FRAMEWORK = {
@@ -157,6 +158,10 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.0/howto/static-files/
 
 STATIC_URL = '/static/'
+
+# django中用来上传图片、文件的资源存放的路径
+MEDIA_ROOT =  os.path.join(BASE_DIR, 'media')
+MEDIA_URL = '/media/'
 
 LOGGING = {
     'version': 1,  # 日志记录格式的版本号

@@ -316,5 +316,9 @@ app.conf.beat_schedule = {
 
 
 # 文件和图片上传
+### 使用阿里云OSS存储
+* 安装OSS库 django-oss-storage
+* OSS 的依赖添加 django_oss_storage 到 APPS
+* settings 里面添加 OSS 设置
 
 

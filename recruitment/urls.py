@@ -77,4 +77,12 @@ urlpatterns = [
 
 ]
 
+from django.conf import settings
+from django.conf.urls.static import static
+if settings.DEBUG:
+        #  document_root文档的路径，同时把它加到静态资源中去
+        urlpatterns += static(settings.MEDIA_URL,
+                              document_root=settings.MEDIA_ROOT)
+
+
 admin.site.site_header = _('**科技招聘管理系统')

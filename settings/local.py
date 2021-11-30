@@ -64,3 +64,22 @@ CELERY_TIMEZONE = 'Asia/Shanghai'
 CELERYD_MAX_TASKS_PER_CHILD = 10
 CELERYD_LOG_FILE = os.path.join(BASE_DIR, "logs", "celery_work.log")
 CELERYBEAT_LOG_FILE = os.path.join(BASE_DIR, "logs", "celery_beat.log")
+
+
+# 阿里云 CDN 存储静态资源文件 & 阿里云存储上传的图片/文件
+# STATICFILES_STORAGE = 'django_oss_storage.backends.OssStaticStorage'
+
+# 添加下面配置后 Django admin 后台上传的 ImageField, FileField 类型的字段都会被自动上传到 oss 的服务器中, 访问路径也会自动替换
+# 如果注释掉的话 oss 的配置会失效, 上传文件会存储到本地, 且访问路径也会变成本地
+DEFAULT_FILE_STORAGE = 'django_oss_storage.backends.OssMediaStorage'
+
+# AliCloud access key ID
+OSS_ACCESS_KEY_ID = os.environ.get('OSS_ACCESS_KEY_ID','')
+# AliCloud access key secret
+OSS_ACCESS_KEY_SECRET = os.environ.get('OSS_ACCESS_KEY_SECRET','')
+# The name of the bucket to store files in
+OSS_BUCKET_NAME = 'djangorecruit'
+
+# The URL of AliCloud OSS endpoint
+# Refer https://www.alibabacloud.com/help/zh/doc-detail/31837.htm for OSS Region & Endpoint
+OSS_ENDPOINT = 'oss-cn-beijing.aliyuncs.com'
