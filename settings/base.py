@@ -213,3 +213,5 @@ LOGGING = {
         },
     },
 }
+
+DATABASE_ROUTERS = ['settings.router.DatabaseRouter']

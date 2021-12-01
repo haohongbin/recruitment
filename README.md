@@ -322,3 +322,17 @@ app.conf.beat_schedule = {
 * settings 里面添加 OSS 设置
 
 
+# 多数据库路由
+操作过程：  
+* 多数据库配置
+* 指定数据库表生成model(inspectdb)
+* 注册到Admin中
+* 添加Router类 & settings中配置Router
+```
+逆向
+python3 manage.py inspectdb --database=running --settings=settings.local
+
+指定某些表生成model
+python3 manage.py inspectdb --database=running --settings=settings.local 表名 > models.py
+```
+
