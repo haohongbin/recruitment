@@ -336,3 +336,45 @@ python3 manage.py inspectdb --database=running --settings=settings.local
 python3 manage.py inspectdb --database=running --settings=settings.local 表名 > models.py
 ```
 
+
+# 支持大数据量的关联外键
+autocomplete_fields  
+比如：输入一个广，自动出来广东，自动对这个字符进行模糊查询
+
+### 国家-城市选择：设置链式关联键
+安装django-smart-selects 插件
+
+# 20行代码实现只读站点ReadOnlyAdmin
+```
+class ReadOnlyAdmin(admin.ModelAdmin):
+    readonly_fields = []
+    
+    
+    def get_list_display(self, request):
+        """
+        遍历对象的model里面的meta,meta里面的所有的concrete_fields
+        """
+        return [field.name for field in self.model._meta.concrete_fields]
+
+    def get_readonly_fields(self, request, obj=None):
+        """
+        把object对应的mode里面的meta的所有的fields取出来，追加到列表
+        再把有外键依赖关系的找出来，也加到只读的字段列表里面去
+        """
+        return list(self.readonly_fields) + \
+               [field.name for field in obj._meta.fields] + \
+               [field.name for field in obj._meta.many_to_many]
+
+    def has_add_permission(self, request):
+        # 是否有添加数据的权限
+        return False
+
+    def has_delete_permission(self, request, obj=None):
+        # 是否有删除数据的权限
+        return False
+
+    def has_change_permission(self, request, obj=None):
+        # 是否有更改数据的权限
+        return False
+
+```
